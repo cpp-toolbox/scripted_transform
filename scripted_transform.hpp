@@ -8,18 +8,16 @@
 #include <iostream>
 #include <vector>
 
-struct ScriptedTransformKeyframe {
-    glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 scale;
-};
-
 class ScriptedTransform {
   public:
-    ScriptedTransform(std::vector<ScriptedTransformKeyframe> keyframes, double ms_start_time, double ms_end_time,
-                      float tau);
+    // TODO: instead of start and end time I think we should just have a duration, and then just start it and stop it
+    ScriptedTransform(std::vector<Transform> keyframes, double ms_start_time, double ms_end_time, float tau);
 
     void update(double ms_curr_time);
+    void insert_keyframe(int i, Transform transform);
+    void append_keyframe(Transform transform);
+    void delete_keyframe(int i);
+    void update_keyframe(int i, Transform point);
 
     Transform transform;
 
