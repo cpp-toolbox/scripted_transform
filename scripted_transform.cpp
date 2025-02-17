@@ -1,4 +1,5 @@
 #include "scripted_transform.hpp"
+#include <chrono>
 
 ScriptedTransform::ScriptedTransform(std::vector<Transform> keyframes, double ms_start_time, double ms_end_time,
                                      float tau)
@@ -27,6 +28,16 @@ ScriptedTransform::ScriptedTransform(std::vector<Transform> keyframes, double ms
     interpolator_scale = CatmullRomInterpolator(scales, ms_start_time, ms_end_time, tau);
 }
 
+int ScriptedTransform::get_num_keyframes() const { return interpolator_position.get_num_points(); }
+
+Transform ScriptedTransform::get_keyframe(int i) const {
+    Transform transform;
+    transform.position = interpolator_position.get_point(i);
+    transform.rotation = interpolator_rotation.get_point(i);
+    transform.scale = interpolator_scale.get_point(i);
+    return transform;
+}
+
 // TODO: pass in a delta time instead, makes pausing and playing easier
 // this todo applies to the interpolators too
 void ScriptedTransform::update(double ms_curr_time) {
@@ -52,9 +63,10 @@ void ScriptedTransform::delete_keyframe(int i) {
     interpolator_scale.delete_point(i);
 }
 void ScriptedTransform::update_keyframe(int i, Transform point) {
-    interpolator_position.update_point(i, transform.position);
-    interpolator_rotation.update_point(i, transform.rotation);
-    interpolator_scale.update_point(i, transform.scale);
+    // TODO: uncomment when this doesn't cause a segfault...
+    /*interpolator_position.update_point(i, transform.position);*/
+    /*interpolator_rotation.update_point(i, transform.rotation);*/
+    /*interpolator_scale.update_point(i, transform.scale);*/
 }
 
 // localize edits????
