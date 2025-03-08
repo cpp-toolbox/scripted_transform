@@ -10,16 +10,16 @@
 
 class ScriptedTransform {
   public:
-    // TODO: instead of start and end time I think we should just have a duration, and then just start it and stop it
-    ScriptedTransform(std::vector<Transform> keyframes, double ms_start_time, double ms_end_time, float tau);
+    ScriptedTransform(double duration, float tau);
+
+    void update(double ms_curr_time);
 
     int get_num_keyframes() const;
     Transform get_keyframe(int i) const;
-    void update(double ms_curr_time);
+    void set_keyframe(int i, Transform point);
     void insert_keyframe(int i, Transform transform);
     void append_keyframe(Transform transform);
     void delete_keyframe(int i);
-    void update_keyframe(int i, Transform point);
 
     Transform transform;
 

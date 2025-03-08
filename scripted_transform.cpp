@@ -1,32 +1,9 @@
 #include "scripted_transform.hpp"
 #include <chrono>
 
-ScriptedTransform::ScriptedTransform(std::vector<Transform> keyframes, double ms_start_time, double ms_end_time,
-                                     float tau)
-    : transform{},
-      // TODO: temporarily doing mock points to be able to initialize it, fix this
-      interpolator_position{
-          {glm::vec3(0.0), glm::vec3(1.0), glm::vec3(2.0), glm::vec3(3.0)}, ms_start_time, ms_end_time, tau},
-      interpolator_rotation{
-          {glm::vec3(0.0), glm::vec3(1.0), glm::vec3(2.0), glm::vec3(3.0)}, ms_start_time, ms_end_time, tau},
-      interpolator_scale{
-          {glm::vec3(0.0), glm::vec3(1.0), glm::vec3(2.0), glm::vec3(3.0)}, ms_start_time, ms_end_time, tau} {
-
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec3> rotations;
-    std::vector<glm::vec3> scales;
-
-    for (const auto &keyframe : keyframes) {
-        positions.push_back(keyframe.position);
-        rotations.push_back(keyframe.rotation);
-        scales.push_back(keyframe.scale);
-    }
-
-    // TODO : use pointers to avoid having to implement a default constructor for CatmullRomInterpolator
-    interpolator_position = CatmullRomInterpolator(positions, ms_start_time, ms_end_time, tau);
-    interpolator_rotation = CatmullRomInterpolator(rotations, ms_start_time, ms_end_time, tau);
-    interpolator_scale = CatmullRomInterpolator(scales, ms_start_time, ms_end_time, tau);
-}
+ScriptedTransform::ScriptedTransform(double duration, float tau)
+    : transform{}, interpolator_position{duration, tau}, interpolator_rotation{duration, tau},
+      interpolator_scale{duration, tau} {}
 
 int ScriptedTransform::get_num_keyframes() const { return interpolator_position.get_num_points(); }
 
@@ -38,12 +15,10 @@ Transform ScriptedTransform::get_keyframe(int i) const {
     return transform;
 }
 
-// TODO: pass in a delta time instead, makes pausing and playing easier
-// this todo applies to the interpolators too
-void ScriptedTransform::update(double ms_curr_time) {
-    transform.position = interpolator_position.interpolate(ms_curr_time);
-    transform.rotation = interpolator_rotation.interpolate(ms_curr_time);
-    transform.scale = interpolator_scale.interpolate(ms_curr_time);
+void ScriptedTransform::update(double deltaTime) {
+    transform.position = interpolator_position.interpolate(deltaTime);
+    transform.rotation = interpolator_rotation.interpolate(deltaTime);
+    transform.scale = interpolator_scale.interpolate(deltaTime);
 }
 
 void ScriptedTransform::insert_keyframe(int i, Transform transform) {
@@ -53,8 +28,9 @@ void ScriptedTransform::insert_keyframe(int i, Transform transform) {
 }
 
 void ScriptedTransform::append_keyframe(Transform transform) {
-    int current_num_keyframes = interpolator_position.get_num_points();
-    insert_keyframe(current_num_keyframes, transform);
+    interpolator_position.append_point(transform.position);
+    interpolator_rotation.append_point(transform.rotation);
+    interpolator_scale.append_point(transform.scale);
 }
 
 void ScriptedTransform::delete_keyframe(int i) {
@@ -62,11 +38,10 @@ void ScriptedTransform::delete_keyframe(int i) {
     interpolator_rotation.delete_point(i);
     interpolator_scale.delete_point(i);
 }
-void ScriptedTransform::update_keyframe(int i, Transform point) {
-    // TODO: uncomment when this doesn't cause a segfault...
-    /*interpolator_position.update_point(i, transform.position);*/
-    /*interpolator_rotation.update_point(i, transform.rotation);*/
-    /*interpolator_scale.update_point(i, transform.scale);*/
+void ScriptedTransform::set_keyframe(int i, Transform transform) {
+    interpolator_position.set_point(i, transform.position);
+    interpolator_rotation.set_point(i, transform.rotation);
+    interpolator_scale.set_point(i, transform.scale);
 }
 
 // localize edits????
