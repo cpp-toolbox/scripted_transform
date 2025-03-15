@@ -15,6 +15,14 @@ Transform ScriptedTransform::get_keyframe(int i) const {
     return transform;
 }
 
+Transform ScriptedTransform::interpolate_transform(double delta_time) {
+    Transform transform;
+    transform.set_position(interpolator_position.interpolate(delta_time));
+    transform.set_rotation(interpolator_rotation.interpolate(delta_time));
+    transform.set_scale(interpolator_scale.interpolate(delta_time));
+    return transform;
+}
+
 void ScriptedTransform::update(double deltaTime) {
     transform.set_position(interpolator_position.interpolate(deltaTime));
     transform.set_rotation(interpolator_rotation.interpolate(deltaTime));
@@ -38,6 +46,7 @@ void ScriptedTransform::delete_keyframe(int i) {
     interpolator_rotation.delete_point(i);
     interpolator_scale.delete_point(i);
 }
+
 void ScriptedTransform::set_keyframe(int i, Transform transform) {
     interpolator_position.set_point(i, transform.get_translation());
     interpolator_rotation.set_point(i, transform.get_rotation());

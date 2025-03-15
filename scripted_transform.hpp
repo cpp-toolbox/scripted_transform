@@ -16,6 +16,7 @@ class ScriptedTransform {
 
     int get_num_keyframes() const;
     Transform get_keyframe(int i) const;
+    Transform interpolate_transform(double delta_time);
     void set_keyframe(int i, Transform point);
     void insert_keyframe(int i, Transform transform);
     void append_keyframe(Transform transform);
