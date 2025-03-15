@@ -13,6 +13,7 @@ class ScriptedTransform {
     ScriptedTransform(double duration, float tau);
 
     void update(double ms_curr_time);
+    void reset();
 
     int get_num_keyframes() const;
     Transform get_keyframe(int i) const;

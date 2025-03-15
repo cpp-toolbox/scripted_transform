@@ -29,6 +29,12 @@ void ScriptedTransform::update(double deltaTime) {
     transform.set_scale(interpolator_scale.interpolate(deltaTime));
 }
 
+void ScriptedTransform::reset() {
+    interpolator_position.reset();
+    interpolator_rotation.reset();
+    interpolator_scale.reset();
+}
+
 void ScriptedTransform::insert_keyframe(int i, Transform transform) {
     interpolator_position.insert_point(i, transform.get_translation());
     interpolator_rotation.insert_point(i, transform.get_rotation());
