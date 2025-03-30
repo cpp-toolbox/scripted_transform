@@ -2,6 +2,7 @@
 #define SCRIPTED_TRANSFORM_HPP
 
 #include "sbpt_generated_includes.hpp"
+#include "delta_time_adjustor.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,6 +30,14 @@ class ScriptedTransform {
     CatmullRomInterpolator interpolator_position;
     CatmullRomInterpolator interpolator_rotation;
     CatmullRomInterpolator interpolator_scale;
+
+  private:
+    float duration;
+
+    DeltaTimeAdjustor interpolator_time_v_arc_length_rotation;
+    DeltaTimeAdjustor interpolator_time_v_arc_length_scale;
+
+    void init_delta_time_adjustor();
 };
 
 #endif // SCRIPTED_TRANSFORM_HPP
